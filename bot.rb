@@ -35,17 +35,13 @@ module TelegramBot
     # Takes Telegram API method and json hash
     def send_message(api_method, message_data)
       uri = URI("#{@api_url + @token}/#{api_method}")
-
       req = Net::HTTP::Post.new(uri)
       req['Content-Type'] = 'application/json'
       req.body = message_data.to_json
-
       resp = Net::HTTP.start(uri.host, uri.port,
                              use_ssl: uri.scheme == 'https') do |http|
         http.request req
       end
-
-      puts JSON.parse resp.body
     end
 
     def chat_message(item)
@@ -70,7 +66,7 @@ module TelegramBot
                  'inline_query_id' => item['inline_query']['id'],
                  'results' => [{
                    'type' => 'photo',
-                   'id' => 'not unique id',
+                   'id' => '#{ rand(1...500) }',
                    'title' => "It is #{item['inline_query']['query']}",
                    'photo_url' => @responses[curr_item],
                    'thumb_url' => @responses[curr_item]
@@ -95,15 +91,17 @@ module TelegramBot
         end
       end
       # telegram servers DDOS protection =)
-      sleep 3 unless @offset > 0
+      sleep 3 unless @offset <= 0
       new_messages
     end
 
     public
 
     def start
-      pust 'Bot is running, press CTRL-C for exit'
+      puts 'Bot is running, press CTRL-C for exit'
       new_messages
+    rescue Interrupt
+      puts "\nBye\n"
     end
   end
 end
