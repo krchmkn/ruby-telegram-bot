@@ -64,25 +64,34 @@ module TelegramBot
           end
 
           if item.has_key? 'message'
-            if @responses.has_key? item['message']['text']
+            curr_item = item['message']['text'].downcase if item['message']['text']
+
+            if @responses.has_key? curr_item
               data = {
                 'chat_id' => item['message']['chat']['id'],
-                'text' => @responses[item['message']['text']]
+                'text' => @responses[curr_item]
+              }
+              send_message('sendMessage', data)
+            else
+              data = {
+                'chat_id' => item['message']['chat']['id'],
+                'text' => "I don't know, what is it"
               }
               send_message('sendMessage', data)
             end
           elsif item.has_key? 'inline_query'
-            if @responses.has_key? item['inline_query']['query']
+            curr_item = item['inline_query']['query'].downcase if item['inline_query']['query']
+
+            if @responses.has_key? curr_item
               data = {
                 'inline_query_id' => item['inline_query']['id'],
                 'results' => [
                   {
-                    'type' => 'article',
+                    'type' => 'photo',
                     'id' => 'not unique id',
-                    'title' => @responses[item['inline_query']['query']],
-                    'input_message_content' => {
-                      'message_text' => @responses[item['inline_query']['query']]
-                    }
+                    'title' => "It is #{item['inline_query']['query']}",
+                    'photo_url' => @responses[curr_item],
+                    'thumb_url' => @responses[curr_item]
                   }
                 ]
               }
@@ -104,7 +113,11 @@ module TelegramBot
     public
 
     def start
-      get_updates
+      begin
+        get_updates
+      rescue Interrupt => e
+        puts 'Bye'
+      end
     end
 
   end
