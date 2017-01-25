@@ -12,5 +12,5 @@ responses = {
 }
 
 bot = TelegramBot::Bot.new(token, responses)
-bot.get_updates
+bot.start
 

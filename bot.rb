@@ -17,10 +17,9 @@ module TelegramBot
       @limit = 1
     end
 
+    private
+
     def get_updates
-
-      puts 'upd'
-
       uri = URI("#{@api_url + @token}/getUpdates")
       params = {
         timeout: @timeout,
@@ -36,32 +35,7 @@ module TelegramBot
       end
 
       updates = JSON.parse resp.body
-
-      if updates['ok']
-
-        updates['result'].each do |item|
-          # WARNING !!!
-          # long polling will not work if the offset does not increase
-          @offset= item['update_id'].to_i + 1
-
-          if @responses.has_key? item['message']['text']
-            data = {
-              'chat_id' => item['message']['chat']['id'],
-              'text' => @responses[item['message']['text']]
-            }
-            self.send_message('sendMessage', data)
-          end
-        end
-
-        # long polling
-        if @offset > 0
-          self.get_updates
-        else
-          sleep 3
-          self.get_updates
-        end
-      end
-
+      message_handler updates
     end
 
     # Takes Telegram API method and json hash
@@ -77,11 +51,60 @@ module TelegramBot
         http.request req
       end
 
-      puts resp.body
+      puts JSON.parse resp.body
     end
 
-    def message_handler
-      # TODO handle messages here
+    def message_handler(updates)
+      if updates['ok']
+        updates['result'].each do |item|
+          if item.has_key? 'update_id'
+          # WARNING !!!
+          # long polling will not work if the offset does not increase
+            @offset = item['update_id'].to_i + 1
+          end
+
+          if item.has_key? 'message'
+            if @responses.has_key? item['message']['text']
+              data = {
+                'chat_id' => item['message']['chat']['id'],
+                'text' => @responses[item['message']['text']]
+              }
+              send_message('sendMessage', data)
+            end
+          elsif item.has_key? 'inline_query'
+            if @responses.has_key? item['inline_query']['query']
+              data = {
+                'inline_query_id' => item['inline_query']['id'],
+                'results' => [
+                  {
+                    'type' => 'article',
+                    'id' => 'not unique id',
+                    'title' => @responses[item['inline_query']['query']],
+                    'input_message_content' => {
+                      'message_text' => @responses[item['inline_query']['query']]
+                    }
+                  }
+                ]
+              }
+              send_message('answerInlineQuery', data)
+            end
+          end
+        end
+
+        # long polling
+        if @offset > 0
+          get_updates
+        else
+          sleep 3
+          get_updates
+        end
+      end
+    end
+
+    public
+
+    def start
+      get_updates
     end
 
   end
