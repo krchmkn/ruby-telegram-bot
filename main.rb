@@ -3,7 +3,7 @@
 # license that can be found in the LICENSE file.
 require './bot.rb'
 
-token = ''
+token = 'BOT_TOKEN'
 responses = {
   '/start' => 'Hi, what a gemstone you want to see?',
   'actinolite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Actinolite_Portugal.jpg/240px-Actinolite_Portugal.jpg',
@@ -18,13 +18,13 @@ responses = {
   'agrellite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Museo_di_mineralogia%2C_pietre_fluorescenti%2C_agrellite_3.JPG/240px-Museo_di_mineralogia%2C_pietre_fluorescenti%2C_agrellite_3.JPG',
   'albite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Albite_-_Crete_%28Kriti%29_Island%2C_Greece.jpg/240px-Albite_-_Crete_%28Kriti%29_Island%2C_Greece.jpg',
   'chrysoberyl' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Chrysoberyl-282796.jpg/240px-Chrysoberyl-282796.jpg',
-  'Alunite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Alunite_-_USGS_Mineral_Specimens_015.jpg/240px-Alunite_-_USGS_Mineral_Specimens_015.jpg',
-  'Amblygonite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Mineral_Ambligonita_GDFL032.jpg/240px-Mineral_Ambligonita_GDFL032.jpg',
-  'Ametrine' => 'https://en.wikipedia.org/wiki/Ametrine',
-  'Amethyst' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Amethyst._Magaliesburg%2C_South_Africa.jpg/270px-Amethyst._Magaliesburg%2C_South_Africa.jpg',
-  'Analcime' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Analcime%2C_Aegirine%2C_Natrolite-225835.jpg/240px-Analcime%2C_Aegirine%2C_Natrolite-225835.jpg',
-  'Anatase' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Anatase_Oisans.jpg/240px-Anatase_Oisans.jpg',
-  'Andalusite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/AndalousiteTyrol.jpg/240px-AndalousiteTyrol.jpg'
+  'alunite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Alunite_-_USGS_Mineral_Specimens_015.jpg/240px-Alunite_-_USGS_Mineral_Specimens_015.jpg',
+  'amblygonite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Mineral_Ambligonita_GDFL032.jpg/240px-Mineral_Ambligonita_GDFL032.jpg',
+  'ametrine' => 'https://en.wikipedia.org/wiki/Ametrine',
+  'amethyst' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Amethyst._Magaliesburg%2C_South_Africa.jpg/270px-Amethyst._Magaliesburg%2C_South_Africa.jpg',
+  'analcime' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Analcime%2C_Aegirine%2C_Natrolite-225835.jpg/240px-Analcime%2C_Aegirine%2C_Natrolite-225835.jpg',
+  'anatase' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Anatase_Oisans.jpg/240px-Anatase_Oisans.jpg',
+  'andalusite' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/AndalousiteTyrol.jpg/240px-AndalousiteTyrol.jpg'
 }
 
 bot = TelegramBot::Bot.new(token, responses)

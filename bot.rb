@@ -28,8 +28,7 @@ module TelegramBot
                              use_ssl: uri.scheme == 'https') do |http|
         http.request req
       end
-      updates = JSON.parse(resp.body)
-      message_handler(updates) if updates['ok']
+      JSON.parse(resp.body, symbolize_names: true)
     end
 
     # Takes Telegram API method and json hash
@@ -42,64 +41,75 @@ module TelegramBot
                              use_ssl: uri.scheme == 'https') do |http|
         http.request req
       end
+      JSON.parse(resp.body, symbolize_names: true)
     end
 
-    def chat_message(item)
-      curr_item = (item['message']['text'].downcase if item['message']['text'])
-      data = {
-        'chat_id' => item['message']['chat']['id']
-      }
-      data['text'] = if @responses.key? curr_item
-                       @responses[curr_item]
-                     else
-                       "I don't know, what is it"
-                     end
-      send_message('sendMessage', data)
+    def chat_message(message)
+      curr_key = message[:text].to_s.downcase
+      data = { chat_id: message[:chat][:id] }
+      data[:text] = if @responses.key? curr_key
+                      @responses[curr_key]
+                    else
+                      "Sorry, I don't know, what is it"
+                    end
+      data
     end
 
-    def inline_query(item)
-      curr_item = if item['inline_query']['query']
-                    item['inline_query']['query'].downcase
-                  end
-      data = if @responses.key? curr_item
+    def inline_query(inline_query)
+      curr_key = inline_query[:query].to_s.downcase
+      data = if @responses.key? curr_key
                {
-                 'inline_query_id' => item['inline_query']['id'],
-                 'results' => [{
-                   'type' => 'photo',
-                   'id' => '#{ rand(1...500) }',
-                   'title' => "It is #{item['inline_query']['query']}",
-                   'photo_url' => @responses[curr_item],
-                   'thumb_url' => @responses[curr_item]
+                 inline_query_id: inline_query[:id],
+                 results: [{
+                   type: 'photo',
+                   id: rand(1...500).to_s,
+                   title: "It is #{inline_query[:query]}",
+                   photo_url: @responses[curr_key],
+                   thumb_url: @responses[curr_key]
                  }]
                }
+             else
+               {
+                 inline_query_id: inline_query[:id],
+                 results: []
+               }
              end
-      send_message('answerInlineQuery', data)
+      data
     end
 
-    def message_handler(updates)
-      updates['result'].each do |item|
-        if item.key? 'update_id'
+    def message_handler
+      updates = new_messages
+      updates[:result].each do |item|
+        if item.key? :update_id
           # WARNING !!!
           # long polling will not work
           # if the offset does not increase
-          @offset = item['update_id'].to_i + 1
+          @offset = item[:update_id].to_i + 1
         end
-        if item.key? 'message'
-          chat_message(item)
-        elsif item.key? 'inline_query'
-          inline_query(item)
+        if item.key? :message
+          data = chat_message(item[:message])
+          send_message('sendMessage', data)
+        end
+        if item.key? :inline_query
+          data = inline_query(item[:inline_query])
+          send_message('answerInlineQuery', data)
         end
       end
+      updates
+    end
+
+    def run
+      message_handler
       # telegram servers DDOS protection =)
-      sleep 3 unless @offset <= 0
-      new_messages
+      sleep 3 unless @offset.zero?
+      run
     end
 
     public
 
     def start
       puts 'Bot is running, press CTRL-C for exit'
-      new_messages
+      run
     rescue Interrupt
       puts "\nBye\n"
     end
