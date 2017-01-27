@@ -3,7 +3,7 @@ require_relative '../bot.rb'
 RSpec.describe TelegramBot::Bot do
   before(:each) do
     # token should be valid
-    token = ''
+    token = 'SECRET_TOKEN'
     responses = {
       'actinolite' => 'https://en.wikipedia.org/wiki/Actinolite'
     }
