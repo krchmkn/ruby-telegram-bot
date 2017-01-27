@@ -3,7 +3,7 @@
 # license that can be found in the LICENSE file.
 require_relative 'bot.rb'
 
-token = ''
+token = 'SECRET_TOKEN'
 responses = {
   '/start' => 'Hi, what a gemstone you want to see?',
   'actinolite' => 'https://en.wikipedia.org/wiki/Actinolite',
