@@ -61,11 +61,12 @@ module TelegramBot
                {
                  inline_query_id: inline_query[:id],
                  results: [{
-                   type: 'photo',
+                   type: 'article',
                    id: rand(1...500).to_s,
                    title: "It is #{inline_query[:query]}",
-                   photo_url: @responses[curr_key],
-                   thumb_url: @responses[curr_key]
+                   input_message_content: {
+                     message_text: @responses[curr_key]
+                   }
                  }]
                }
              else

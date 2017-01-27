@@ -1,11 +1,11 @@
-require './bot.rb'
+require_relative '../bot.rb'
 
 RSpec.describe TelegramBot::Bot do
   before(:each) do
     # token should be valid
-    token = 'BOT_TOKEN'
+    token = ''
     responses = {
-      'ametrine' => 'https://en.wikipedia.org/wiki/Ametrine'
+      'actinolite' => 'https://en.wikipedia.org/wiki/Actinolite'
     }
     @bot = TelegramBot::Bot.new(token, responses)
   end
@@ -42,7 +42,7 @@ RSpec.describe TelegramBot::Bot do
     if @bot.instance_variable_get(:@responses).key? query
       expect(inline_query).to include(:inline_query_id)
       expect(inline_query[:results].first).to include(:type, :id, :title,
-                                                      :photo_url, :thumb_url)
+                                                      :input_message_content)
     else
       expect(inline_query).to be_truthy
     end
